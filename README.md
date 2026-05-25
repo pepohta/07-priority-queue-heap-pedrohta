@@ -3,7 +3,7 @@
 ## Compilar
 
 ```bash
-javac -d out src/entidades/Pessoa.java src/estatica/FilaEstatica.java src/estatica/FilaComPrioridade.java src/heap/FilaComPrioridadeHeap.java src/Main.java
+javac -d out src/entidades/Paciente.java src/heap/FilaComPrioridadeHeap.java src/Main.java
 ```
 
 ## Executar
