@@ -1,82 +1,83 @@
-package estatica;
+package heap;
 
-public class FilaEstatica<T> {
-    protected final T[] elementos;
-    protected int inicio;
-    protected int fim;
-    protected int tamanho;
+public class FilaComPrioridadeHeap<T extends Comparable<T>> {
+    private final T[] elementos;
+    private int tamanho;
 
-    public FilaEstatica(int capacidade) {
-        if (capacidade <= 0) {
-            throw new IllegalArgumentException("A capacidade deve ser maior que zero.");
-        }
-
-        this.elementos = (T[]) new Object[capacidade];
+    @SuppressWarnings("unchecked")
+    public FilaComPrioridadeHeap(int capacidade) {
+        elementos = (T[]) new Comparable[capacidade];
+        tamanho = 0;
     }
 
-    public void enfileirar(T valor) {
+    public void enfileirar(T elemento) {
         if (estaCheia()) {
-           throw new RuntimeException("Fila está cheia");
+            throw new RuntimeException("Fila cheia");
         }
 
-        elementos[fim] = valor;
-        // fim = (fim + 1) % capacidade();
-
-        fim++;
-        if (fim == capacidade()) {
-            fim = 0;
-        }
-
+        elementos[tamanho] = elemento;
+        sobeHeap(tamanho);
         tamanho++;
     }
 
-    // Implementação com complexidade O(1)
     public T desenfileirar() {
         if (estaVazia()) {
-            throw new RuntimeException("A fila está vazia");
+            throw new RuntimeException("Fila vazia");
         }
 
-        T elementoRemovido = (T) elementos[inicio];
-        elementos[inicio] = null;
-        inicio++;
-        if (inicio == capacidade()) {
-            inicio = 0;
-        }
+        T removido = elementos[0];
 
         tamanho--;
+        elementos[0] = elementos[tamanho];
+        elementos[tamanho] = null;
 
-        return elementoRemovido;
-    }
-
-
-    /*
-      - Implementação com complexidade O(n) em vez de O(1)
-
-        Fila com 1 milhão de elementos e fizer 1 milhão de desenfileiramentos:
-         - Array circular: 1 milhão × O(1) = 1 milhão de operações
-         - Array com deslocamento: 1 milhão × O(n) = 1 trilhão de operações
-    */
-    public T desenfileirarComDeslocamento() {
-        if (estaVazia()) throw new IllegalStateException("Fila vazia");
-
-        T valorRemovido = (T) elementos[0]; // remove sempre do início
-
-        // Desloca todos os elementos uma posição para a esquerda
-        for (int i = 0; i < tamanho - 1; i++) {
-            elementos[i] = elementos[i + 1];
+        if (!estaVazia()) {
+            desceHeap(0);
         }
 
-        elementos[tamanho - 1] = null;
-        tamanho--;
-        return valorRemovido;
+        return removido;
     }
 
-    public T frente() {
-        if (estaVazia()) {
-            throw new IllegalStateException("A fila esta vazia.");
-        }
+    private void sobeHeap(int indice) {
+        while (indice > 0) {
+            int pai = (indice - 1) / 2;
 
-        return (T) elementos[inicio];
+            if (elementos[indice].compareTo(elementos[pai]) <= 0) {
+                break;
+            }
+
+            trocar(indice, pai);
+            indice = pai;
+        }
+    }
+
+    private void desceHeap(int indice) {
+        while (true) {
+            int esquerdo = 2 * indice + 1;
+            int direito = 2 * indice + 2;
+            int maior = indice;
+
+            if (esquerdo < tamanho && elementos[esquerdo].compareTo(elementos[maior]) > 0) {
+                maior = esquerdo;
+            }
+
+            if (direito < tamanho && elementos[direito].compareTo(elementos[maior]) > 0) {
+                maior = direito;
+            }
+
+            if (maior == indice) {
+                break;
+            }
+
+            trocar(indice, maior);
+            indice = maior;
+        }
+    }
+
+    private void trocar(int i, int j) {
+        T temp = elementos[i];
+        elementos[i] = elementos[j];
+        elementos[j] = temp;
     }
 
     public boolean estaVazia() {
@@ -91,7 +92,16 @@ public class FilaEstatica<T> {
         return tamanho;
     }
 
-    public int capacidade() {
-        return elementos.length;
+    public String estadoInternoHeap() {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < tamanho; i++) {
+            sb.append(elementos[i]);
+
+            if (i < tamanho - 1) {
+                sb.append(", ");
+            }
+        }
+        sb.append("]");
+        return sb.toString();
     }
 }

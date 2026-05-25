@@ -1,43 +1,38 @@
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-import entidades.Pessoa;
-import estatica.FilaComPrioridade;
+import entidades.Paciente;
+import heap.FilaComPrioridadeHeap;
 
 public class Main {
-    public static void main(String args[]){
-        System.out.println("--- Fila de Inteiros ---");
 
-        FilaComPrioridade<Integer> fila = new FilaComPrioridade<>(10);
+    public static void main(String[] args) {
+        FilaComPrioridadeHeap<Paciente> fila = new FilaComPrioridadeHeap<>(10);
 
-        fila.enfileirar(1);
-        fila.enfileirar(3);
-        fila.enfileirar(2);
+        Paciente[] pacientes = {
+                new Paciente("Carlos", 2, 45, false),
+                new Paciente("Maria", 5, 5, false),
+                new Paciente("João", 3, 20, false),
+                new Paciente("Beatriz", 3, 35, true),
+                new Paciente("Pedro", 5, 2, false),
+                new Paciente("Helena", 2, 45, true)
+        };
 
-        System.out.println(fila);
+        System.out.println("=== CHEGADA DOS PACIENTES ===");
 
-        System.out.println("\n--- Fila de Pessoas ---");
-
-        FilaComPrioridade<Pessoa> filaPessoas = new FilaComPrioridade<>(10);
-
-        filaPessoas.enfileirar(new Pessoa("Adão", 1));
-        filaPessoas.enfileirar(new Pessoa("Carlos", 3));
-        filaPessoas.enfileirar(new Pessoa("Bruno", 2));
-
-        while (!filaPessoas.estaVazia()) {
-            System.out.println(filaPessoas.desenfileirar());
+        for (Paciente paciente : pacientes) {
+            fila.enfileirar(paciente);
+            System.out.println("\nPaciente inserido: " + paciente);
+            System.out.println("Estado interno do heap:");
+            System.out.println(fila.estadoInternoHeap());
         }
 
-        System.out.println("\n--- Fila de Pessoas (PriorityQueue) ---");
+        System.out.println("\n=== ORDEM DE ATENDIMENTO ===");
 
-        Queue<Pessoa> filaPessoasJava = new PriorityQueue<>(10);
-
-        filaPessoasJava.add(new Pessoa("Adão", 1));
-        filaPessoasJava.add(new Pessoa("Carlos", 3));
-        filaPessoasJava.add(new Pessoa("Bruno", 2));
-
-        while (!filaPessoasJava.isEmpty()) {
-            System.out.println(filaPessoasJava.poll());
+        int posicao = 1;
+        while (!fila.estaVazia()) {
+            System.out.println(posicao + ". " + fila.desenfileirar());
+            posicao++;
         }
     }
 }

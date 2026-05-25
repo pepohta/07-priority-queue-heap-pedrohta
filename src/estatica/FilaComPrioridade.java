@@ -1,48 +1,102 @@
-package estatica;
+package heap;
 
-public class FilaComPrioridade<T> extends FilaEstatica<T> {
+public class FilaComPrioridadeHeap<T extends Comparable<T>> {
+    private final T[] elementos;
+    private int tamanho;
 
-    public FilaComPrioridade(int capacidade) {
-        super(capacidade);
+    @SuppressWarnings("unchecked")
+    public FilaComPrioridadeHeap(int capacidade) {
+        elementos = (T[]) new Comparable[capacidade];
+        tamanho = 0;
     }
 
-    @Override
     public void enfileirar(T elemento) {
         if (estaCheia()) {
-            throw new RuntimeException("A fila está cheia.");
+            throw new RuntimeException("Fila cheia");
         }
 
-        Comparable<T> elementoOrdenavel = (Comparable<T>) elemento;
-
-        int posicao;
-        for (posicao = 0; posicao < tamanho(); posicao++) {
-            if (elementoOrdenavel.compareTo(elementos[posicao]) < 0) {
-                break;
-            }
-        }
-
-        adicionaPosicao(posicao, elemento);
+        elementos[tamanho] = elemento;
+        sobeHeap(tamanho);
+        tamanho++;
     }
 
-    public void adicionaPosicao(int posicao, T elemento) {
-		if (posicao < 0 || posicao > tamanho) {
-			throw new IllegalArgumentException("Posição inválida");
-		}
+    public T desenfileirar() {
+        if (estaVazia()) {
+            throw new RuntimeException("Fila vazia");
+        }
 
-        // Mover todos os elementos
-		for (int i = tamanho - 1; i >= posicao; i--) {
-			elementos[i+1] = elementos[i];
-		}
+        T removido = elementos[0];
 
-		elementos[posicao] = elemento;
-		tamanho++;
-	}
+        tamanho--;
+        elementos[0] = elementos[tamanho];
+        elementos[tamanho] = null;
 
-    @Override
-    public String toString() {
+        if (!estaVazia()) {
+            desceHeap(0);
+        }
+
+        return removido;
+    }
+
+    private void sobeHeap(int indice) {
+        while (indice > 0) {
+            int pai = (indice - 1) / 2;
+
+            if (elementos[indice].compareTo(elementos[pai]) <= 0) {
+                break;
+            }
+
+            trocar(indice, pai);
+            indice = pai;
+        }
+    }
+
+    private void desceHeap(int indice) {
+        while (true) {
+            int esquerdo = 2 * indice + 1;
+            int direito = 2 * indice + 2;
+            int maior = indice;
+
+            if (esquerdo < tamanho && elementos[esquerdo].compareTo(elementos[maior]) > 0) {
+                maior = esquerdo;
+            }
+
+            if (direito < tamanho && elementos[direito].compareTo(elementos[maior]) > 0) {
+                maior = direito;
+            }
+
+            if (maior == indice) {
+                break;
+            }
+
+            trocar(indice, maior);
+            indice = maior;
+        }
+    }
+
+    private void trocar(int i, int j) {
+        T temp = elementos[i];
+        elementos[i] = elementos[j];
+        elementos[j] = temp;
+    }
+
+    public boolean estaVazia() {
+        return tamanho == 0;
+    }
+
+    public boolean estaCheia() {
+        return tamanho == elementos.length;
+    }
+
+    public int tamanho() {
+        return tamanho;
+    }
+
+    public String estadoInternoHeap() {
         StringBuilder sb = new StringBuilder("[");
         for (int i = 0; i < tamanho; i++) {
             sb.append(elementos[i]);
+
             if (i < tamanho - 1) {
                 sb.append(", ");
             }
