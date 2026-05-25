@@ -15,7 +15,7 @@ java -cp out Main
 ## Gerar Javadoc
 
 ```bash
-javadoc -d doc -sourcepath src -subpackages estatica:heap:entidades
+javadoc -d doc src/entidades/Paciente.java src/heap/FilaComPrioridadeHeap.java
 ```
 
 ## Descrição
