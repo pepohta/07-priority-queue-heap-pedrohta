@@ -17,6 +17,7 @@ java -cp out Main
 ```bash
 javadoc -d doc src/entidades/Paciente.java src/heap/FilaComPrioridadeHeap.java
 ```
+Abrir a documentação: `doc/index.html`
 
 ## Descrição
 
@@ -80,5 +81,3 @@ A prioridade entre pacientes segue três critérios:
 ## Requisitos
 
 - Java JDK 17 ou superior
-
-Abrir a documentação: `doc/index.html`
